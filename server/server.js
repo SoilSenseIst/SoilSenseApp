@@ -107,12 +107,7 @@ app.post('/profile', async (req, res) => {
             error: err
         });
     }
-<<<<<<< HEAD
 })
-=======
-});
->>>>>>> 35eeb66226da85b8ac2f31a7ac1ba3cf36deb6f9
-
 
 app.post('/authenticate', async (req, res) => {
     const { session_token } = req.body;
