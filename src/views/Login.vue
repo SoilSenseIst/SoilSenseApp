@@ -26,7 +26,7 @@ const Login = async () => {
     if (res.success){
     localStorage.setItem('token', res.token)
     localStorage.setItem('session_token', res.token) 
-    router.push('/')
+    router.push('/profile')
     }else {
         alert(res.message)
     }
