@@ -20,7 +20,7 @@ const client = new stytch.Client({
 const port = process.env.PORT || 3333;
 
 app.use(cors({
-  origin: 'https://soilsenseapp.netlify.app/#/login', // substitui pela URL real do frontend
+  origin: 'https://soilsenseapp.netlify.app/#/login', 
   credentials: true,
 }));
 
@@ -82,7 +82,7 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/profile', async (req, res) => {
-    const { name, surname, user_id } = req.body; // Asegúrate de que `user_id` venga en el cuerpo
+    const { name, surname, user_id } = req.body;
 
     try {
         const resp = await client.users.update({
