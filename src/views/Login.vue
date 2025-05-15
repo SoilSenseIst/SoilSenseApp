@@ -12,7 +12,7 @@ const Login = async () => {
         return alert('Please fill all the fields')
     }
 
-    const res = await fetch('https://soilsensebackend.onrender.com/login', {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

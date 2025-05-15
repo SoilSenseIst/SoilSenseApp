@@ -17,7 +17,7 @@ const Register = async () => {
         return alert('Passwords do not match')
     }
 
-    const res = await fetch('https://soilsensebackend.onrender.com/register', {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
