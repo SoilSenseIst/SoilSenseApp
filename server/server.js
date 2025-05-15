@@ -19,7 +19,11 @@ const client = new stytch.Client({
 
 const port = process.env.PORT || 3333;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://soilsenseapp.netlify.app/#/login', // substitui pela URL real do frontend
+  credentials: true,
+}));
+
 app.use(express.json());
 
 app.post('/register', async (req, res) => {
