@@ -17,7 +17,7 @@ const Register = async () => {
         return alert('Passwords do not match')
     }
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
+    const res = await fetch('https://soilsensebackend.onrender.com/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ const Register = async () => {
     if (res.success){
         localStorage.setItem('token', res.token);
         localStorage.setItem('session_token', res.token);
-        router.push('/profile')
+        router.push('/')
     } else {
         alert(res.message)
     }
