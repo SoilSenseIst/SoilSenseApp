@@ -12,7 +12,7 @@ const logout = async () => {
         return;
     }
 
-    const res = await fetch('https://soilsensebackend.onrender.com/logout', {
+    const res = await fetch("http://localhost:3333/register", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

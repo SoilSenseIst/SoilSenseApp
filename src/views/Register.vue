@@ -2,42 +2,54 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
-const email = ref('')
-const password = ref('')
-const conf_password = ref('')
+const email = ref("");
+const password = ref("");
+const conf_password = ref("");
+const loading = ref(false);
 
 const Register = async () => {
-    if ( !email.value || !password.value || !conf_password.value) {
-        return alert('Please fill all the fields')
-    }
+  if (!email.value || !password.value || !conf_password.value) {
+    return alert("Please fill all the fields");
+  }
 
-    else if (password.value !== conf_password.value ) {
-        return alert('Passwords do not match')
-    }
+  if (password.value !== conf_password.value) {
+    return alert("Passwords do not match");
+  }
 
-    const res = await fetch('https://soilsensebackend.onrender.com/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: email.value,
-            password: password.value
-        })
-    }).then(res => res.json())
+  loading.value = true;
 
-    if (res.success){
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('session_token', res.token);
-        router.push('/')
+  try {
+    const response = await fetch("http://localhost:3333/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("session_token", data.token);
+      router.push("/");
     } else {
-        alert(res.message)
+      alert(data.message);
     }
-}
-
+  } catch (error) {
+    console.error("Registration failed:", error);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
+
 
 <template>
     <main>
