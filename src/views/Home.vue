@@ -12,7 +12,7 @@ const logout = async () => {
         return;
     }
 
-    const res = await fetch("http://localhost:3333/register", {
+    const res = await fetch("http://localhost:3333/logout", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
