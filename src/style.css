@@ -1,0 +1,38 @@
+:root {
+  --primary: #79BF5A;
+  --primary-dark: #317D44;
+  --blue: #2E5161;
+  --pop: #A2532F;
+  --light: #F3F4F6;
+  --dark: #111827;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+a {
+  color: var(--primary);
+}
+
+input {
+    appearance: none;
+    outline: none;
+    border: none;
+    background: none;
+}
+ 
+.logo {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 5px;
+  padding: 0.5rem;
+  padding-right: calc(0.5rem - 5px);
+  border: 2px solid #F3F4F6;
+  color:#F3F4F6;
+  margin-bottom: 1.5rem;
+}
