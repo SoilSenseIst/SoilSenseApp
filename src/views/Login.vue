@@ -10,7 +10,7 @@ const loading = ref(false);
 
 const Login = async () => {
   if (!email.value || !password.value) {
-    return alert("Please fill all the fields");
+    return alert("Please fill all the fields.");
   }
 
   loading.value = true;
@@ -32,7 +32,7 @@ const Login = async () => {
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("session_token", data.token);
-      router.push("/");
+      router.push("/profile");
     } else {
       alert(data.message);
     }
