@@ -54,8 +54,10 @@ const Profile = async () => {
     const data = await response.json();
     localStorage.setItem("first_name", first_name.value);
     localStorage.setItem("last_name", last_name.value);
+    localStorage.setItem("device_ID", device_ID.value);
+    localStorage.setItem("device_key", device_key.value);
     alert("Perfil atualizado com sucesso!");
-    router.push("/");
+    router.push("/Connect");
 
   } catch (error) {
     console.error("Falha na atualização:", error);
