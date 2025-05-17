@@ -21,7 +21,7 @@ const Register = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch("http://localhost:3333/register", {
+    const response = await fetch("https://soilsenseserver.onrender.com/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,6 +35,7 @@ const Register = async () => {
     const data = await response.json();
 
     if (data.success) {
+       localStorage.setItem("email", data.email);
       localStorage.setItem("token", data.token);
       localStorage.setItem("session_token", data.token);
       router.push("/profile");

@@ -31,7 +31,7 @@ const Profile = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch("http://localhost:3333/profile", {
+    const response = await fetch("https://soilsenseserver.onrender.com/profile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
