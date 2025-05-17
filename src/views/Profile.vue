@@ -52,7 +52,8 @@ const Profile = async () => {
     }
 
     const data = await response.json();
-
+    localStorage.setItem("first_name", first_name.value);
+    localStorage.setItem("last_name", last_name.value);
     alert("Perfil atualizado com sucesso!");
     router.push("/");
 
@@ -71,7 +72,7 @@ const Profile = async () => {
     <header>
       <h1 class="logo">SoilSense</h1>
       <h2>Profile</h2>
-      <p>Login or create an account to start using the SoilSense app</p>
+      <p></p>
     </header>
 
     <form @submit.prevent="Profile">

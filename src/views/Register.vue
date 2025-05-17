@@ -37,7 +37,7 @@ const Register = async () => {
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("session_token", data.token);
-      router.push("/");
+      router.push("/profile");
     } else {
       alert(data.message);
     }

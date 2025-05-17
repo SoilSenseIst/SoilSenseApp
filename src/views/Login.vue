@@ -32,7 +32,7 @@ const Login = async () => {
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("session_token", data.token);
-      router.push("/profile");
+      router.push("/");
     } else {
       alert(data.message);
     }

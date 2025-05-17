@@ -1,8 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+const firstName = ref("");
+const lastName = ref("");
+
+onMounted(() => {
+  firstName.value = localStorage.getItem("first_name") || "";
+  lastName.value = localStorage.getItem("last_name") || "";
+});
 
 const logout = async () => {
     const sessionToken = localStorage.getItem('session_token');
@@ -35,7 +43,7 @@ const logout = async () => {
 
 <template>
     <main>
-        <h1>Hello, world</h1>
+        <h1>Hello, {{ firstName }} {{lastName }}! </h1>
         <button @click="logout">Logout</button>
     </main>      
 </template>
