@@ -116,7 +116,6 @@ app.post('/logout', async (req, res) => {
 });
 
 app.post('/profile', async (req, res) => {
-  console.log("Dados recebidos no /profile:", req.body);
   const { session_token, first_name, last_name, device_ID, device_key } = req.body;
 
   if (!session_token || !first_name || !last_name || !device_ID || !device_key) {
