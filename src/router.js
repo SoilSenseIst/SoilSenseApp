@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import SensorReadings from './views/SensorReadings.vue';
 
 const routes = [
     {
@@ -29,6 +30,11 @@ const routes = [
         name: "Connect",
         component: () => import('./views/Connect.vue'),
     },
+    {
+  path: '/readings',
+  name: 'SensorReadings',
+  component: SensorReadings
+},
 
 ]
 
