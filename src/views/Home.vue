@@ -186,8 +186,8 @@ const refreshReadings = async () => {
       Fosforo.value = latest.phosphorus;
       Potassio.value = latest.potassium;
 
-      // Alimentar os dados do gráfico com os últimos 7 ou menos
-      const recent = data.data.slice(-7); // últimos 7 registros
+      // Alimentar os dados do gráfico
+      const recent = data.data.slice(); 
 
       chartLabels.value = recent.map((entry, i) => `Dia ${i + 1}`);
       chartHumidityData.value = recent.map(entry => entry.humidity);
