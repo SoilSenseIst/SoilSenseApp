@@ -30,12 +30,6 @@ const routes = [
         name: "Connect",
         component: () => import('./views/Connect.vue'),
     },
-    {
-  path: '/readings',
-  name: 'SensorReadings',
-  component: SensorReadings
-},
-
 ]
 
 const router = createRouter ({
