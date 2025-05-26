@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
-import SensorReadings from './views/SensorReadings.vue';
 
 const routes = [
     {
