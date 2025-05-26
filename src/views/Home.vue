@@ -189,7 +189,7 @@ const refreshReadings = async () => {
       // Alimentar os dados do gráfico
       const recent = data.data.slice(); 
 
-      chartLabels.value = recent.map((entry, i) => `Dia ${i + 1}`);
+      chartLabels.value = recent.map((entry, i) => `Day ${i + 1}`);
       chartHumidityData.value = recent.map(entry => entry.humidity);
       chartNitrogenData.value = recent.map(entry => entry.nitrogen);
       chartPhosphorusData.value = recent.map(entry => entry.phosphorus);
