@@ -1,4 +1,5 @@
 <script setup>
+import logo from './logo.png';
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -49,7 +50,7 @@ const Login = async () => {
     <main>
 
         <header>
-            <h1 class = "logo">SoilSense</h1>
+            <img :src="logo" alt="SoilSense Logo" class="logo-img" />
             <h2>Login</h2>
             <p>Login or create an account to start using the SoilSense app</p>
         </header>
@@ -86,15 +87,16 @@ const Login = async () => {
     </main>      
 </template>
 
+
 <style scoped>
 main{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    height: 100vh;
     background-color: var(--primary-dark);
     color: #F3F4F6;
+    padding: 2rem;
 }
 
 header{
@@ -112,12 +114,13 @@ footer{
 
 h2{
     font: 2.15rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 h2 ~ p {
     font-weight: 500;
     font-size: 1rem;
+    margin-top: 1rem;
 } 
 
 form{
