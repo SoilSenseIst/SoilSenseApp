@@ -1,4 +1,6 @@
 <script setup>
+import logo from './logo.png'; 
+
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Chart, registerables } from 'chart.js';
@@ -19,19 +21,17 @@ const Fosforo = ref("");
 const Potassio = ref("");
 
 /* Dados fictícios para evolução nos últimos 7 dias */
-const days = ["Dia 1", "Dia 2", "Dia 3", "Dia 4", "Dia 5", "Dia 6", "Dia 7"];
-const humidityData = [55, 60, 58, 62, 65, 63, 67];
-const nitrogenData = [10, 12, 11, 13, 14, 15, 16];
-const fosforoData = [5, 6, 6.5, 7, 7.2, 7.5, 7.8];
-const potassioData = [8, 9, 8.5, 9.5, 10, 10.5, 11];
+const chartLabels = ref([]);
+const chartHumidityData = ref([]);
+const chartNitrogenData = ref([]);
+const chartPhosphorusData = ref([]);
+const chartPotassiumData = ref([]);
 
 let chartInstance = null;
 
 /* Lista de alertas com data (exemplo)*/
 const alerts = ref([
-  { date: "2025-05-17 08:00", message: "5 valores medidos na manhã." },
-  { date: "2025-05-16 18:00", message: "Alerta: humidade baixa detectada." },
-  { date: "2025-05-15 12:00", message: "Temperatura estável." },
+  { date: "", message: "" },
 ]);
 
 const alertsExpanded = ref(false);
@@ -41,16 +41,11 @@ const toggleAlerts = () => {
 };
 
 onMounted(() => {
-  firstName.value = localStorage.getItem("first_name") || "";
+   firstName.value = localStorage.getItem("first_name") || "";
   lastName.value = localStorage.getItem("last_name") || "";
   deviceID.value = localStorage.getItem("device_ID") || "";
 
-  temperature.value = 25; // exemplo
-  humidity.value = 67;    // último valor do exemplo
-  
-  Nitrogenio.value = 16;
-  Fosforo.value = 7.8;
-  Potassio.value = 11;
+  refreshReadings(); 
 
   /* Inicializa gráfico após o DOM estar pronto */
   initChart();
@@ -59,19 +54,19 @@ onMounted(() => {
 /* Gráfico com as percentagens */
 const initChart = () => {
   const ctx = document.getElementById('soilChart').getContext('2d');
-  
-  if(chartInstance) {
+
+  if (chartInstance) {
     chartInstance.destroy();
   }
 
   chartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: days,
+      labels: chartLabels.value,
       datasets: [
         {
           label: 'Humidity (%)',
-          data: humidityData,
+          data: chartHumidityData.value,
           borderColor: 'blue',
           backgroundColor: 'rgba(0,0,255,0.1)',
           fill: true,
@@ -79,7 +74,7 @@ const initChart = () => {
         },
         {
           label: 'Nitrogen (%)',
-          data: nitrogenData,
+          data: chartNitrogenData.value,
           borderColor: 'green',
           backgroundColor: 'rgba(0,128,0,0.1)',
           fill: true,
@@ -87,7 +82,7 @@ const initChart = () => {
         },
         {
           label: 'Phosphor (%)',
-          data: fosforoData,
+          data: chartPhosphorusData.value,
           borderColor: 'orange',
           backgroundColor: 'rgba(255,165,0,0.1)',
           fill: true,
@@ -95,7 +90,7 @@ const initChart = () => {
         },
         {
           label: 'Potassium (%)',
-          data: potassioData,
+          data: chartPotassiumData.value,
           borderColor: 'red',
           backgroundColor: 'rgba(255,0,0,0.1)',
           fill: true,
@@ -107,11 +102,11 @@ const initChart = () => {
       responsive: true,
       plugins: {
         legend: {
-          position: 'top',
+          position: 'top'
         },
         tooltip: {
           mode: 'index',
-          intersect: false,
+          intersect: false
         }
       },
       interaction: {
@@ -177,11 +172,45 @@ const logout = async () => {
   }
 };
 
+const refreshReadings = async () => {
+  try {
+    const res = await fetch("https://soilsense-api.onrender.com/api/readings");
+    const data = await res.json();
+
+    if (data.success && data.data.length > 0) {
+      const latest = data.data[data.data.length - 1];
+
+      temperature.value = latest.temperature;
+      humidity.value = latest.humidity;
+      Nitrogenio.value = latest.nitrogen;
+      Fosforo.value = latest.phosphorus;
+      Potassio.value = latest.potassium;
+
+      // Alimentar os dados do gráfico
+      const recent = data.data.slice();
+
+      chartLabels.value = recent.map((entry, i) => `Day ${i + 1}`);
+      chartHumidityData.value = recent.map(entry => entry.humidity);
+      chartNitrogenData.value = recent.map(entry => entry.nitrogen);
+      chartPhosphorusData.value = recent.map(entry => entry.phosphorus);
+      chartPotassiumData.value = recent.map(entry => entry.potassium);
+
+      initChart(); // reinicializa o gráfico com novos dados
+    } else {
+      console.warn("⚠️ Nenhum dado retornado da API");
+    }
+  } catch (error) {
+    console.error("❌ Erro ao atualizar valores:", error);
+  }
+};
+
+
+
 </script>
 
 <template>
   <main>
-    <button @click="toggleSidebar">SoilSense</button>
+    <img :src="logo" alt="SoilSense Logo" class="logo-img" @click="toggleSidebar" style="cursor:pointer;" />
 
     <h1>Hi, {{ firstName }} {{ lastName }}!</h1>
 
@@ -208,6 +237,8 @@ const logout = async () => {
 
   <div class="device-box">
     <h2 class="device-title"> Device: {{ deviceID }}</h2>
+
+
     <div class="info-icons">
       <div class="icon-temp" title="Temperature">
         🌡️ {{ temperature }}°C
@@ -229,7 +260,7 @@ const logout = async () => {
       </div>
     </div>
 
-    <div style="margin-top: 5rem; max-width: 800px;">
+    <div style="margin-top: 5rem; max-width: 1000px;">
       <canvas id="soilChart"></canvas>
     </div>
 
@@ -248,14 +279,18 @@ const logout = async () => {
   </main>      
 </template>
 
+
 <style scoped>
 main {
-  padding: 1.5rem;
+  background-color: var(--primary-dark);
+  padding: 2rem;
   position: relative;
 }
 
-h1 {
-  margin-bottom: 1rem;
+h1{
+    font: 2rem;
+    margin-top: 2rem;
+    color:white;
 }
 
 .sidebar {
@@ -264,8 +299,7 @@ h1 {
   left: 0;
   width: 250px;
   height: 100vh;
-  background-color: #eee;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  background-color: white;
   display: flex;
   flex-direction: column;
   padding: 1rem;
@@ -289,18 +323,17 @@ h1 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: transparent;
   z-index: 1200; 
 }
 
 .alerts-box {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 224, 0.95);
+  top: 2rem;
+  right: 2rem;
+  background: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  box-shadow: none;
   font-weight: 600;
   font-size: 1rem;
   color: var( --pop);
@@ -319,7 +352,7 @@ h1 {
   list-style-type: disc;
   font-weight: normal;
   font-size: 0.9rem;
-  color: #553300;
+  color: var(--dark);
 }
 
 /* Botão Ver mais / Ver menos */
@@ -327,7 +360,7 @@ h1 {
   margin-left: 0.75rem;
   background: none;
   border: none;
-  color: #0056b3;
+  color: var(--dark);
   font-weight: 700;
   cursor: pointer;
   font-size: 0.9rem;
@@ -339,21 +372,23 @@ h1 {
   text-decoration: underline;
 }
 
-.device-box {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 2rem auto; /* centraliza */
-  position: relative;
-  z-index: 1;
+.device-box{
+    flex: 1 1 0%;
+    display: block;
+    border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
+    background-color: white;
+    box-shadow: 0px -4px 12px 4px rgba(0,0,0,0.16);
+    color: var(--dark);
+    padding: 2rem 1.5rem;
+    margin-top: 2rem;
+    width: 100%;
 }
+
 
 .device-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #333;
+  color: var(--dark);
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -364,7 +399,7 @@ h1 {
   top: 1rem;
   display: flex;
   gap: 0.75rem;
-  background: rgba(255,255,255,0.9);
+  background:white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
@@ -387,7 +422,7 @@ h1 {
   top: 2rem;
   display: flex;
   gap: 0.75rem;
-  background: rgba(255,255,255,0.9);
+  background: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
