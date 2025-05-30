@@ -212,7 +212,7 @@ const refreshReadings = async () => {
       Potassio.value = latest.potassium;
 
       // Alimentar os dados do gráfico
-      const recent = data.data.slice(); 
+      const recent = data.data.slice(-20); 
 
       chartLabels.value = recent.map((entry, i) => `Day ${i + 1}`);
       chartHumidityData.value = recent.map(entry => entry.humidity);
