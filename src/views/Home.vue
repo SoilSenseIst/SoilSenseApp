@@ -123,7 +123,7 @@ const initChart = () => {
             usePointStyle: true,     // ← Usa ponto ao invés de retângulo
             pointStyle: 'circle',    // ← Define como círculo
             font: {
-              size: 10 // 👈 Tamanho da fonte da legenda (pode ajustar mais)
+              size: 7 // 👈 Tamanho da fonte da legenda (pode ajustar mais)
             },
             padding: 10
           }
