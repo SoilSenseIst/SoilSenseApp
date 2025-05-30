@@ -144,9 +144,11 @@ label span{
     color: var(--blue);
     font-size: 1rem;
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
-
+  
 input:not([type="submit"]) {
     display: block;
     width: 100%;
