@@ -50,11 +50,6 @@ const toggleEdit = () => {
   updateIrrigationChart();
 };
   
-/* Lista de alertas com data (exemplo)*/
-const alerts = ref([
-  { date: "", message: "" },
-]);
-
 // Alertas
 const alerts = ref([{ date: "", message: "" }]);
 const alertsExpanded = ref(false);
