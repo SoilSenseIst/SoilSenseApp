@@ -260,9 +260,9 @@ const refreshReadings = async () => {
       </div>
     </div>
 
-    <div style="margin-top: 5rem; max-width: 1000px;">
-      <canvas id="soilChart"></canvas>
-    </div>
+      <div style="margin-top: 5rem; width: 100%; display: flex; justify-content: center;">
+        <canvas id="soilChart" style="max-width: 100%; height: auto; min-height: 300px;"></canvas>
+      </div>
 
   </div>
 
