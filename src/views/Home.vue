@@ -239,27 +239,6 @@ const refreshReadings = async () => {
 
     <h1>Hi, {{ firstName }} {{ lastName }}!</h1>
 
-    <div class="alerts-box" title="Alertas">
-        <button class="btn-toggle" @click.stop="toggleAlerts">
-            {{ alertsExpanded ? 'Ver menos' : 'Messages' }}
-        </button>
-
-        <div v-if="alertsExpanded" class="messages">
-            <ul class="alerts-list">
-                <li v-for="(alert, index) in alerts" :key="index">
-                    <strong>{{ alert.date }}:</strong> {{ alert.message }}
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div 
-        v-if="alertsExpanded" 
-        class="alerts-overlay" 
-        @click="alertsExpanded = false"
-    ></div>
-
-
   <div class="device-box">
     <h2 class="device-title"> Device: {{ deviceID }}</h2>
 
@@ -288,6 +267,26 @@ const refreshReadings = async () => {
       <div style="margin-top: 5rem; width: 100%; display: flex; justify-content: center;">
         <canvas id="soilChart" style="max-width: 100%; height: auto; min-height: 300px;"></canvas>
       </div>
+
+          <div class="alerts-box" title="Alertas">
+        <button class="btn-toggle" @click.stop="toggleAlerts">
+            {{ alertsExpanded ? 'Ver menos' : 'Messages' }}
+        </button>
+
+        <div v-if="alertsExpanded" class="messages">
+            <ul class="alerts-list">
+                <li v-for="(alert, index) in alerts" :key="index">
+                    <strong>{{ alert.date }}:</strong> {{ alert.message }}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div 
+        v-if="alertsExpanded" 
+        class="alerts-overlay" 
+        @click="alertsExpanded = false"
+    ></div>
 
   </div>
 
@@ -353,13 +352,12 @@ h1{
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1200; 
+  z-index: 100; 
 }
 
 .alerts-box {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
+  position: relative;
+  bottom: 1rem;
   background: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
@@ -367,8 +365,8 @@ h1{
   font-weight: 600;
   font-size: 1rem;
   color: var( --pop);
-  z-index: 1200;
-  max-width: 320px;
+  z-index: 100;
+  width: 100%;
   cursor: default;
   user-select: none;
 }
@@ -401,6 +399,7 @@ h1{
 .btn-toggle:hover {
   text-decoration: underline;
 }
+
 
 .device-box{
     flex: 1 1 0%;
