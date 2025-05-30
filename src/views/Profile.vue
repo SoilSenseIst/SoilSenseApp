@@ -81,36 +81,44 @@ const Profile = async () => {
     <form @submit.prevent="Profile">
       <label>
         <span>Enter your first name</span>
-        <input 
+        <box>
+          <input 
           type="text"
           v-model="first_name" 
           placeholder="John" />
+        </box>
       </label>
 
       <label>
         <span>Enter your last name</span>
-        <input 
+        <box>
+          <input 
           type="text"
           v-model="last_name" 
           placeholder="Smith" />
+        </box>
       </label>
 
       <label>
         <span>Enter your device ID</span>
-        <input 
+        <box>
+          <input 
           type="text"
           v-model="device_ID" 
           placeholder="device ID" />
+        </box>
       </label>
 
       <label>
         <span>Enter your device key</span>
-        <input 
+        <box>
+          <input 
           type="text"
           v-model="device_key" 
           placeholder="device key" />
+        </box>
       </label>
-
+      
       <input
         type="submit" 
         :value="loading ? 'Updating...' : 'Update'"
@@ -166,10 +174,19 @@ label span{
     color: var(--blue);
     font-size: 1rem;
     font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+label box{
+    display: block;
+    color: var(--blue);
+    font-size: 1rem;
+    font-weight: 500;
     margin-bottom: 1rem;
     border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
+  
 input:not([type="submit"]) {
   display: block;
   width: 100%;
