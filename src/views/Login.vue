@@ -59,18 +59,21 @@ const Login = async () => {
 
             <label>
                 <span>Enter your email</span>
+                <box>
                 <input type="email" 
                 v-model="email" 
                 placeholder="JonhSmith@test.com" />
+                </box>
             </label>
 
             <label>
                 <span>Enter your password</span>
+                <box>
                 <input type="password" 
                 v-model="password" 
                 placeholder="***************" />
+                </box>
             </label>
-
             <input
                 type="submit" 
                 value="login" />
@@ -140,6 +143,14 @@ label{
 }
 
 label span{
+    display: block;
+    color: var(--blue);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+label box{
     display: block;
     color: var(--blue);
     font-size: 1rem;
