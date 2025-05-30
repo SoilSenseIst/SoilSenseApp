@@ -1,18 +1,15 @@
 <script setup>
 import logo from './logo.png'; 
-
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
-
 const router = useRouter();
 
 const firstName = ref("");
 const lastName = ref("");
 const deviceID = ref("");
-const showSidebar = ref(false);
 
 const temperature = ref(""); 
 const humidity = ref("");     
@@ -27,55 +24,65 @@ const chartNitrogenData = ref([]);
 const chartPhosphorusData = ref([]);
 const chartPotassiumData = ref([]);
 
-let chartInstance = null;
+let nutrientChart = null;
+let climateChart = null;
 
+// Edição do device
+const editMode = ref(false); 
+const irrigationCount = ref(1);
+const nutrients = ref([
+  Array.from({ length: 6 }, (_, i) => ({
+    name: ["Water", "HaifaMap", "HaifaMKP", "HakaphosVioleta", "Calcinit", "Summun"][i],
+    value: 0,
+  }))
+]);
+watch(irrigationCount, (newCount) => {
+  nutrients.value = Array.from({ length: newCount }, () =>
+    ["Water", "HaifaMap", "HaifaMKP", "HakaphosVioleta", "Calcinit", "Summun"].map(name => ({
+      name,
+      value: 0
+    }))
+  );
+  updateIrrigationChart();
+});
+const toggleEdit = () => {
+  editMode.value = !editMode.value;
+  updateIrrigationChart();
+};
+  
 /* Lista de alertas com data (exemplo)*/
 const alerts = ref([
   { date: "", message: "" },
 ]);
 
+// Alertas
+const alerts = ref([{ date: "", message: "" }]);
 const alertsExpanded = ref(false);
+const toggleAlerts = () => alertsExpanded.value = !alertsExpanded.value;
 
-const toggleAlerts = () => {
-  alertsExpanded.value = !alertsExpanded.value;
-};
+// Update profile 
+const updateProfile = () => router.push('/profile');
 
 onMounted(() => {
-   firstName.value = localStorage.getItem("first_name") || "";
+  firstName.value = localStorage.getItem("first_name") || "";
   lastName.value = localStorage.getItem("last_name") || "";
   deviceID.value = localStorage.getItem("device_ID") || "";
-
-  refreshReadings(); 
-
-  /* Inicializa gráfico após o DOM estar pronto */
-  initChart();
+  refreshReadings();
 });
 
-/* Gráfico com as percentagens */
-const initChart = () => {
-  const ctx = document.getElementById('soilChart').getContext('2d');
+// Gráficos
+const initReadingsCharts = () => {
+  const destroyChart = chart => chart && chart.destroy();
 
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
+  destroyChart(nutrientChart);
+  destroyChart(climateChart);
 
-  chartInstance = new Chart(ctx, {
+  // Gráfico 1: Nutrientes
+  nutrientChart = new Chart(document.getElementById('nutrientChart').getContext('2d'), {
     type: 'line',
     data: {
       labels: chartLabels.value,
       datasets: [
-        {
-          label: 'Humidity (%)',
-          data: chartHumidityData.value,
-          borderColor: 'blue',
-          backgroundColor: 'rgba(0,0,255,0.1)',
-          fill: true,
-          tension: 0.3,
-          pointStyle: 'circle',
-          pointRadius: 4,
-          pointBackgroundColor: 'blue',
-          pointBorderColor: 'blue'
-        },
         {
           label: 'Nitrogen (%)',
           data: chartNitrogenData.value,
@@ -84,9 +91,10 @@ const initChart = () => {
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
-          pointRadius: 4,
+          pointRadius: 1.5,
           pointBackgroundColor: 'green',
-          pointBorderColor: 'green'
+          pointBorderColor: 'green',
+          borderWidth: 1
         },
         {
           label: 'Phosphorus (%)',
@@ -96,9 +104,10 @@ const initChart = () => {
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
-          pointRadius: 4,
+          pointRadius: 1.5,
           pointBackgroundColor: 'orange',
-          pointBorderColor: 'orange'
+          pointBorderColor: 'orange',
+          borderWidth: 1
         },
         {
           label: 'Potassium (%)',
@@ -108,22 +117,23 @@ const initChart = () => {
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
-          pointRadius: 4,
+          pointRadius: 1.5,
           pointBackgroundColor: 'red',
-          pointBorderColor: 'red'
+          pointBorderColor: 'red',
+          borderWidth: 1
         }
       ]
     },
-    options: {
+  options: {
       responsive: true,
       plugins: {
         legend: {
           position: 'top',
           labels: {
-            usePointStyle: true,     // ← Usa ponto ao invés de retângulo
-            pointStyle: 'circle',    // ← Define como círculo
+            usePointStyle: true,    
+            pointStyle: 'circle',
             font: {
-              size: 7 // 👈 Tamanho da fonte da legenda (pode ajustar mais)
+              size: 10
             },
             padding: 10
           }
@@ -141,33 +151,135 @@ const initChart = () => {
         y: {
           min: 0,
           max: 100,
-          title: {
-            display: true,
-            text: 'Percentage (%)'
-          }
         },
         x: {
           title: {
             display: true,
-            text: 'Days'
+            text: 'NPK readings'
+          }
+        }
+      }
+    }
+  });
+
+  // Gráfico 2: Temperatura e Humidade
+  climateChart = new Chart(document.getElementById('climateChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: chartLabels.value,
+      datasets: [
+        {
+          label: 'Humidity (%)',
+          data: chartHumidityData.value,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(0,0,255,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 1.5,
+          pointBackgroundColor: 'rgba(0,0,255,1)',
+          pointBorderColor: 'blue',
+          borderWidth: 1
+        },
+        {
+          label: 'Temperature (°C)',
+          data: chartTemperatureData.value,
+          borderColor: 'red',
+          backgroundColor:  'rgba(255,0,0,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 1.5,
+          pointBackgroundColor: 'rgba(255,0,0,1)',
+          pointBorderColor: 'red',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            usePointStyle: true,    
+            pointStyle: 'circle',
+            font: {
+              size: 10
+            },
+            padding: 10
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        intersect: false
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 100,
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Atmospheric readings '
           }
         }
       }
     }
   });
 };
+const refreshReadings = async () => {
+  try {
+    const res = await fetch("https://soilsense-api.onrender.com/api/readings");
+    const data = await res.json();
 
+    if (data.success && data.data.length > 0) {
+      const latest = data.data[data.data.length - 1];
+      temperature.value = latest.temperature;
+      humidity.value = latest.humidity;
+      Nitrogenio.value = latest.nitrogen;
+      Fosforo.value = latest.phosphorus;
+      Potassio.value = latest.potassium;
 
-const toggleSidebar = () => {
-  showSidebar.value = !showSidebar.value;
+      const recent = data.data.slice(-14);
+      chartLabels.value = recent.map((_, i) => `${i + 1}`);
+      chartHumidityData.value = recent.map(entry => entry.humidity);
+      chartTemperatureData.value = recent.map(entry => entry.temperature);
+      chartNitrogenData.value = recent.map(entry => entry.nitrogen);
+      chartPhosphorusData.value = recent.map(entry => entry.phosphorus);
+      chartPotassiumData.value = recent.map(entry => entry.potassium);
+
+      initReadingsCharts();
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar valores:", error);
+  }
 };
 
-const closeSidebar = () => {
-  showSidebar.value = false;
-};
+// Logout
+const logout = async () => {
+  const sessionToken = localStorage.getItem('session_token');
+  if (!sessionToken) return alert("No session token found.");
 
-const updateProfile = () => {
-  router.push('/profile');
+  const res = await fetch("http://localhost:3333/logout", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_token: sessionToken })
+  }).then(res => res.json());
+
+  if (res.success) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('session_token');
+    router.push('/login');
+  } else {
+    alert(res.message);
+  }
 };
 
 const logout = async () => {
@@ -196,118 +308,82 @@ const logout = async () => {
       alert(res.message);
   }
 };
-
-const refreshReadings = async () => {
-  try {
-    const res = await fetch("https://soilsense-api.onrender.com/api/readings");
-    const data = await res.json();
-
-    if (data.success && data.data.length > 0) {
-      const latest = data.data[data.data.length - 1];
-
-      temperature.value = latest.temperature;
-      humidity.value = latest.humidity;
-      Nitrogenio.value = latest.nitrogen;
-      Fosforo.value = latest.phosphorus;
-      Potassio.value = latest.potassium;
-
-      // Alimentar os dados do gráfico
-      const recent = data.data.slice(-14); 
-
-      chartLabels.value = recent.map((entry, i) => `Day ${i + 1}`);
-      chartHumidityData.value = recent.map(entry => entry.humidity);
-      chartNitrogenData.value = recent.map(entry => entry.nitrogen);
-      chartPhosphorusData.value = recent.map(entry => entry.phosphorus);
-      chartPotassiumData.value = recent.map(entry => entry.potassium);
-
-      initChart(); // reinicializa o gráfico com novos dados
-    } else {
-      console.warn("⚠️ Nenhum dado retornado da API");
-    }
-  } catch (error) {
-    console.error("❌ Erro ao atualizar valores:", error);
-  }
-};
-
-
-
 </script>
 
 <template>
   <main>
-    <img :src="logo" alt="SoilSense Logo" class="logo-img" @click="toggleSidebar" style="cursor:pointer;" />
+
+<img :src="logo" alt="SoilSense Logo" class="logo-img" />
+    <div class="profile-circle" @click="updateProfile">🧑‍🌾 </div>
+    <div class="add-device-circle" @click="addDevice">➕ </div>
 
     <h1>Hi, {{ firstName }} {{ lastName }}!</h1>
 
-  <div class="device-box">
-    <h2 class="device-title"> Device: {{ deviceID }}</h2>
-
-
-    <div class="info-icons">
-      <div class="icon-temp" title="Temperature">
-        🌡️ {{ temperature }}°C
+    <div class="device-box">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="device-title">Device: {{ deviceID }}</h2>
+        <button class="edit-button" @click="toggleEdit">✏️</button>
       </div>
-      <div class="icon-humidity" title="Humidity">
-        💧 {{ humidity }}%
-      </div>
-    </div>
+      
+      <template v-if="!editMode">
 
-    <div class="nutri-icons">
-      <div class="icon-N" title="Nitrogen">
-        N {{ Nitrogenio }} %
-      </div>
-      <div class="icon-P" title="Phosphor">
-        P {{ Fosforo }}%
-      </div>
-      <div class="icon-K" title="Potassium">
-        K {{ Potassio }}%
-      </div>
-    </div>
-
-      <div style="margin-top: 5rem; width: 100%; display: flex; justify-content: center;">
-        <canvas id="soilChart" style="max-width: 100%; height: auto; min-height: 300px;"></canvas>
-      </div>
-
-          <div class="alerts-box" title="Alertas">
-        <button class="btn-toggle" @click.stop="toggleAlerts">
-            {{ alertsExpanded ? 'Ver menos' : 'Messages' }}
-        </button>
-
-        <div v-if="alertsExpanded" class="messages">
-            <ul class="alerts-list">
-                <li v-for="(alert, index) in alerts" :key="index">
-                    <strong>{{ alert.date }}:</strong> {{ alert.message }}
-                </li>
-            </ul>
+        <div class="info-icons">
+          <div class="icon-temp">🌡️ {{ temperature }}°C</div>
+          <div class="icon-humidity">💧 {{ humidity }}%</div>
         </div>
-    </div>
+        <div class="nutri-icons">
+          <div class="icon-N">N {{ Nitrogenio }}%</div>
+          <div class="icon-P">P {{ Fosforo }}%</div>
+          <div class="icon-K">K {{ Potassio }}%</div>
+        </div>
+        <div class="charts-container">
+          <canvas id="nutrientChart"></canvas>
+          <canvas id="climateChart"></canvas>
+          <canvas id="irrigationChart"></canvas>
+        </div>
+        <div class="alerts-box">
+          <button class="btn-toggle" @click.stop="toggleAlerts">
+            {{ alertsExpanded ? 'Ver menos' : 'Messages' }}
+          </button>
+          <div v-if="alertsExpanded" class="messages">
+            <ul class="alerts-list">
+              <li v-for="(alert, index) in alerts" :key="index">
+                <strong>{{ alert.date }}:</strong> {{ alert.message }}
+              </li>
+            </ul>
+          </div>
+        </div>
 
-    <div 
-        v-if="alertsExpanded" 
-        class="alerts-overlay" 
-        @click="alertsExpanded = false"
-    ></div>
+      </template>
 
-  </div>
+      <template v-else>
 
-    <div 
-      v-if="showSidebar" 
-      class="overlay" 
-      @click="closeSidebar"
-    ></div>
+        <div class="edit-irrigation-form">
+          <label class="irrigation-block">
+            How many times do you want to irrigate:
+            <input type="number" min="1" v-model.number="irrigationCount" />
+          </label>
+          <div v-for="(set, i) in nutrients" :key="i" class="irrigation-block">
+            <h4>Irrigation {{ i + 1 }}</h4>
+            <div class="nutrient-inputs">
+              <label v-for="(nutrient, j) in set" :key="j">
+                {{ nutrient.name }} ({{ j === 0 ? 'L' : 'Kg' }}):
+                <input type="number" min="0" max="100" v-model.number="nutrients[i][j].value" />
+              </label>
+            </div>
+          </div>
+        </div>
 
-    <div v-if="showSidebar" class="sidebar" @click.stop>
-      <button @click="logout">Logout</button>
-      <button @click="updateProfile">Update Profile</button>
+      </template>
+      
     </div>
 
     <div class="logout-box">
       <input type="submit" value="logout" @click="logout" />
     </div>
-
-  </main>      
+  </main>
 </template>
-
 
 <style scoped>
 main {
@@ -320,30 +396,6 @@ h1{
     font: 2rem;
     margin-top: 2rem;
     color:white;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 250px;
-  height: 100vh;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  gap: 1rem;
-  z-index: 1200;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.3);
-  z-index: 1000;
 }
 
 .alerts-overlay {
@@ -400,7 +452,6 @@ h1{
   text-decoration: underline;
 }
 
-
 .device-box{
     flex: 1 1 0%;
     display: block;
@@ -432,7 +483,7 @@ h1{
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  z-index: 1100; /* acima da sidebar */
+  z-index: 100; /* acima da sidebar */
   font-weight: 600;
   font-size: 1rem;
   color: #333;
@@ -455,7 +506,7 @@ h1{
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  z-index: 1100; /* acima da sidebar */
+  z-index: 100; /* acima da sidebar */
   font-weight: 600;
   font-size: 1rem;
   color: #333;
@@ -468,7 +519,62 @@ h1{
   cursor: default;
 }
 
+.edit-button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--dark);
+  transition: transform 0.2s;
+}
 
+.edit-button:hover {
+  transform: scale(1.1);
+}
+
+.edit-irrigation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.edit-irrigation-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.edit-irrigation-form input {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.nutrient-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.irrigation-block {
+  display: block;
+    color: var(--blue);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.irrigation-block h4 {
+  margin-bottom: 1rem;
+  color: var(--dark);
+}
 
 .logout-box {
   display: block;
@@ -494,6 +600,64 @@ h1{
 
 .logout-box input[type="submit"]:hover {
   background-color: var(--primary);
+}
+
+.profile-circle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+
+.profile-circle:hover {
+  background-color: #f0f0f0;
+}
+
+.add-device-circle {
+  position: absolute;
+  top: 2rem;
+  right: 5.5rem;
+  width: 48px;
+  height: 48px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+
+.add-device:hover {
+  background-color: #f0f0f0;
+}
+
+
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 4rem;
+  justify-content: center;
+}
+
+.charts-container canvas {
+  width: 300px !important;
+  height: 250px !important;
 }
 
 </style>
