@@ -125,7 +125,7 @@ const initChart = () => {
             font: {
               size: 7 // 👈 Tamanho da fonte da legenda (pode ajustar mais)
             },
-            padding: 30
+            padding: 10
           }
         },
         tooltip: {
