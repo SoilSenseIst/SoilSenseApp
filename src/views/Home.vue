@@ -70,7 +70,11 @@ const initChart = () => {
           borderColor: 'blue',
           backgroundColor: 'rgba(0,0,255,0.1)',
           fill: true,
-          tension: 0.3
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 4,
+          pointBackgroundColor: 'blue',
+          pointBorderColor: 'blue'
         },
         {
           label: 'Nitrogen (%)',
@@ -78,15 +82,23 @@ const initChart = () => {
           borderColor: 'green',
           backgroundColor: 'rgba(0,128,0,0.1)',
           fill: true,
-          tension: 0.3
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 4,
+          pointBackgroundColor: 'green',
+          pointBorderColor: 'green'
         },
         {
-          label: 'Phosphor (%)',
+          label: 'Phosphorus (%)',
           data: chartPhosphorusData.value,
           borderColor: 'orange',
           backgroundColor: 'rgba(255,165,0,0.1)',
           fill: true,
-          tension: 0.3
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 4,
+          pointBackgroundColor: 'orange',
+          pointBorderColor: 'orange'
         },
         {
           label: 'Potassium (%)',
@@ -94,7 +106,11 @@ const initChart = () => {
           borderColor: 'red',
           backgroundColor: 'rgba(255,0,0,0.1)',
           fill: true,
-          tension: 0.3
+          tension: 0.3,
+          pointStyle: 'circle',
+          pointRadius: 4,
+          pointBackgroundColor: 'red',
+          pointBorderColor: 'red'
         }
       ]
     },
@@ -102,7 +118,12 @@ const initChart = () => {
       responsive: true,
       plugins: {
         legend: {
-          position: 'top'
+          position: 'top',
+          labels: {
+            usePointStyle: true,     // ← Usa ponto ao invés de retângulo
+            pointStyle: 'circle',    // ← Define como círculo
+            padding: 20
+          }
         },
         tooltip: {
           mode: 'index',
@@ -132,6 +153,7 @@ const initChart = () => {
     }
   });
 };
+
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
