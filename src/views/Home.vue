@@ -262,7 +262,7 @@ const logout = async () => {
   const sessionToken = localStorage.getItem('session_token');
   if (!sessionToken) return alert("No session token found.");
 
-  const res = await fetch("http://localhost:3333/logout", {
+  const res = await fetch("https://soilsenseserver.onrender.com/logout", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ session_token: sessionToken })
