@@ -301,6 +301,11 @@ const refreshReadings = async () => {
       <button @click="logout">Logout</button>
       <button @click="updateProfile">Update Profile</button>
     </div>
+
+    <div class="logout-box">
+      <input type="submit" value="logout" @click="logout" />
+    </div>
+
   </main>      
 </template>
 
@@ -462,6 +467,34 @@ h1{
   align-items: center;
   gap: 1rem;
   cursor: default;
+}
+
+
+
+.logout-box {
+  display: block;
+  width: fit-content;
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.logout-box input[type="submit"] {
+  font-size: 1.5rem;
+  font-weight: 200;
+  color: #F3F4F6;
+  background-color: var(--primary-dark);
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: none;
+}
+
+.logout-box input[type="submit"]:hover {
+  background-color: var(--primary);
 }
 
 </style>
