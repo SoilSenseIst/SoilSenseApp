@@ -122,7 +122,10 @@ const initChart = () => {
           labels: {
             usePointStyle: true,     // ← Usa ponto ao invés de retângulo
             pointStyle: 'circle',    // ← Define como círculo
-            padding: 20
+            font: {
+              size: 10 // 👈 Tamanho da fonte da legenda (pode ajustar mais)
+            },
+            padding: 10
           }
         },
         tooltip: {
