@@ -1,6 +1,6 @@
 <script setup>
 import logo from './logo.png'; 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Chart, registerables } from 'chart.js';
 
@@ -10,6 +10,7 @@ const router = useRouter();
 const firstName = ref("");
 const lastName = ref("");
 const deviceID = ref("");
+const showSidebar = ref(false);
 
 const temperature = ref(""); 
 const humidity = ref("");     
@@ -17,9 +18,10 @@ const Nitrogenio = ref("");
 const Fosforo = ref("");     
 const Potassio = ref("");
 
-/* Dados fictícios para evolução nos últimos 7 dias */
+// Dados para os gráficos
 const chartLabels = ref([]);
 const chartHumidityData = ref([]);
+const chartTemperatureData = ref([]);
 const chartNitrogenData = ref([]);
 const chartPhosphorusData = ref([]);
 const chartPotassiumData = ref([]);
@@ -49,7 +51,7 @@ const toggleEdit = () => {
   editMode.value = !editMode.value;
   updateIrrigationChart();
 };
-  
+
 // Alertas
 const alerts = ref([{ date: "", message: "" }]);
 const alertsExpanded = ref(false);
@@ -58,11 +60,33 @@ const toggleAlerts = () => alertsExpanded.value = !alertsExpanded.value;
 // Update profile 
 const updateProfile = () => router.push('/profile');
 
-onMounted(() => {
-  firstName.value = localStorage.getItem("first_name") || "";
-  lastName.value = localStorage.getItem("last_name") || "";
-  deviceID.value = localStorage.getItem("device_ID") || "";
-  refreshReadings();
+// Data
+const fetchUserData = async () => {
+  try {
+    const username = localStorage.getItem("user") || "";
+    if (!username) return;
+
+    const res = await fetch(`https://sua-api.com/api/users?username=${username}`);
+    const data = await res.json();
+
+    if (data.success && data.user) {
+      //firstName.value = data.user.first_name || "";
+      //lastName.value = data.user.last_name || "";
+
+      /* Suporte a múltiplos deviceIDs
+      if (Array.isArray(data.user.deviceIDs)) {
+        devices.value = data.user.deviceIDs.map(id => ({ id }));
+      } else if (data.user.deviceID) {
+        devices.value = [{ id: data.user.deviceID }];
+      }*/
+    }
+  } catch (error) {
+    console.error("Erro ao buscar dados do usuário:", error);
+  }
+};
+onMounted(async () => {
+  await fetchUserData();
+  await refreshReadings();
 });
 
 // Gráficos
@@ -260,36 +284,29 @@ const refreshReadings = async () => {
 // Logout
 const logout = async () => {
   const sessionToken = localStorage.getItem('session_token');
-
-  if (!sessionToken) {
-      alert("No session token found.");
-      return;
-  }
+  if (!sessionToken) return alert("No session token found.");
 
   const res = await fetch("https://soilsenseserver.onrender.com/logout", {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          session_token: sessionToken
-      })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_token: sessionToken })
   }).then(res => res.json());
 
   if (res.success) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('session_token');
-      router.push('/login');
+    localStorage.removeItem('token');
+    localStorage.removeItem('session_token');
+    router.push('/login');
   } else {
-      alert(res.message);
+    alert(res.message);
   }
 };
+
 </script>
 
 <template>
   <main>
 
-<img :src="logo" alt="SoilSense Logo" class="logo-img" />
+    <img :src="logo" alt="SoilSense Logo" class="logo-img" />
     <div class="profile-circle" @click="updateProfile">🧑‍🌾 </div>
     <div class="add-device-circle" @click="addDevice">➕ </div>
 
@@ -350,9 +367,8 @@ const logout = async () => {
             </div>
           </div>
         </div>
-
+        
       </template>
-      
     </div>
 
     <div class="logout-box">
