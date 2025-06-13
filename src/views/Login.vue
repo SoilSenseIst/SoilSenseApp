@@ -33,6 +33,8 @@ const Login = async () => {
     if (data.success) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("session_token", data.token);
+      localStorage.setItem("email", email.user);
+      
       router.push("/");
     } else {
       alert(data.message);
@@ -102,6 +104,11 @@ main{
     padding: 2rem;
 }
 
+.logo-img {
+  width: 50px; /* ou qualquer valor como 50%, 10rem, etc. */
+  height: auto; /* mantém a proporção */
+}
+
 header{
     padding: 1.5rem;
 }
@@ -112,7 +119,8 @@ footer{
     color: var(--dark);
     text-align: center;
     padding: 1.5rem;
-    padding-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-radius: 0 0 1.5rem 1.5rem;
 }
 
 h2{

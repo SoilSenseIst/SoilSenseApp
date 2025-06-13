@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
-
 const router = useRouter();
 
 const device_ID = ref("");
@@ -14,10 +13,17 @@ onMounted(() => {
   device_ID.value = localStorage.getItem("device_ID") || "";
   device_key.value = localStorage.getItem("device_key") || "";
 
+  if (!device_ID.value || !device_key.value) {
+    statusMessage.value = "Device information not found. Please register your device.";
+    setTimeout(() => {
+      router.push("/profile");
+    }, 3000);
+    return;
+  }
+
   simulateConnection();
 });
 
-// Simula uma tentativa de conexão com ESP32
 function simulateConnection() {
   const interval = setInterval(() => {
     if (progress.value < 95) {
@@ -25,25 +31,29 @@ function simulateConnection() {
     }
   }, 200);
 
-  // Simula a resposta da conexão após um tempo
   setTimeout(() => {
     clearInterval(interval);
     progress.value = 100;
-    statusMessage.value = "Connection established successfully!";
-    router.push("/");
+    statusMessage.value = `Connected to device ${device_ID.value} successfully!`;
+
+    setTimeout(() => {
+      router.push("/");
+    }, 1500); // Pequena pausa após sucesso
   }, 4000);
 }
 </script>
 
 <template>
   <div class="container">
-    <h2>Connecting to {{ device_ID }}...</h2>
+    <h2>Connecting to {{ device_ID || 'your device' }}...</h2>
+
     <div class="progress-bar">
       <div
         class="progress-fill"
         :style="{ width: progress + '%' }"
       ></div>
     </div>
+
     <p>{{ statusMessage }}</p>
   </div>
 </template>
@@ -54,6 +64,7 @@ function simulateConnection() {
   margin: 50px auto;
   text-align: center;
   font-family: var(--font-family);
+  color: var(--dark);
 }
 
 .progress-bar {

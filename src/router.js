@@ -29,6 +29,16 @@ const routes = [
         name: "Connect",
         component: () => import('./views/Connect.vue'),
     },
+        {
+        path: "/funcionalities",
+        name: "Funcionalities",
+        component: () => import('./views/funcionalities.vue'),
+    },
+     {
+        path: "/device",
+        name: "Device",
+        component: () => import('./views/Device.vue'),
+    },
 ]
 
 const router = createRouter ({

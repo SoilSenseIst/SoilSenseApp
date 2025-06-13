@@ -5,8 +5,6 @@ import logo from './logo.png';
 
 const router = useRouter();
 
-const first_name = ref("");
-const last_name = ref("");
 const device_ID = ref("");
 const device_key = ref("");
 const loading = ref(false);
@@ -19,8 +17,8 @@ onMounted(() => {
 });
 
 
-const Profile = async () => {
-  if (!first_name.value || !last_name.value || !device_ID.value || !device_key.value) {
+const AddDevice = async () => {
+  if ( !device_ID.value || !device_key.value) {
     alert("Please fill all the fields.");
     return;
   }
@@ -33,13 +31,13 @@ const Profile = async () => {
   loading.value = true;
   
   try {
-    const response = await fetch("https://soilsenseserver.onrender.com/profile", {
+    const response = await fetch("https://soilsenseserver.onrender.com/device", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email, // ✅ passa o email do localStorage
+        email, 
         session_token: session_token.value,
         first_name: first_name.value,
         last_name: last_name.value,
@@ -55,17 +53,13 @@ const Profile = async () => {
     }
 
     const data = await response.json();
-    localStorage.setItem("first_name", first_name.value);
-    localStorage.setItem("last_name", last_name.value);
     localStorage.setItem("device_ID", device_ID.value);
     localStorage.setItem("device_key", device_key.value);
-    localStorage.setItem("selected_device_ID", device_ID.value);
-    localStorage.setItem("devices", JSON.stringify([device_ID.value])); // só o device do profile na lista
-    alert("Profile updated successfully!");
+    alert("Device added successfully!");
     router.push("/Connect");
 
   } catch (error) {
-    console.error("Falha na atualização:", error);
+    console.error("Fail:", error);
     alert("Try again.");
   } finally {
     loading.value = false;
@@ -78,31 +72,11 @@ const Profile = async () => {
   <main>
     <header>
       <img :src="logo" alt="SoilSense Logo" class="logo-img" />
-      <h2>Profile</h2>
-      <p>Welcome to SoilSense. Please fill in your information. </p>
+      <h2>Add Device</h2>
+      <p>Please fill in your device information </p>
     </header>
 
-    <form @submit.prevent="Profile">
-      <label>
-        <span>Enter your first name</span>
-        <box>
-          <input 
-          type="text"
-          v-model="first_name" 
-          placeholder="John" />
-        </box>
-      </label>
-
-      <label>
-        <span>Enter your last name</span>
-        <box>
-          <input 
-          type="text"
-          v-model="last_name" 
-          placeholder="Smith" />
-        </box>
-      </label>
-
+    <form @submit.prevent="AddDevice">
       <label>
         <span>Enter your device ID</span>
         <box>

@@ -2,13 +2,15 @@ import express from 'express';
 import stytch from 'stytch';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import axios from "axios";
+
 
 dotenv.config();
 
 const app = express();
 
 app.use(cors({
-  origin: 'https://soilsenseist.netlify.app', 
+  origin: 'https://soilsenseist.netlify.app',
   credentials: true,
 }));
 
@@ -56,6 +58,7 @@ app.post('/login', async (req, res) => {
       password,
       session_duration_minutes: 60,
     });
+ 
 
     res.json({
       success: true,
@@ -63,6 +66,8 @@ app.post('/login', async (req, res) => {
       token: resp.session_token,
     });
   } catch (err) {
+    console.error("🔴 Login error:", err);
+
     console.error(err);
     res.json({
       success: false,
@@ -114,9 +119,9 @@ app.post('/logout', async (req, res) => {
 });
 
 app.post('/profile', async (req, res) => {
-  const { session_token, first_name, last_name, device_ID, device_key } = req.body;
+  const { email, first_name, last_name, device_ID, device_key } = req.body;
 
-  if (!session_token || !first_name || !last_name || !device_ID || !device_key) {
+  if (!email || !first_name || !last_name || !device_ID || !device_key) {
     return res.status(400).json({
       success: false,
       message: 'Missing required fields',
@@ -124,21 +129,52 @@ app.post('/profile', async (req, res) => {
   }
 
   try {
-    // Autentica o token para obter user_id
-    const session = await client.sessions.authenticate({ session_token });
-    const user_id = session.user_id;
-
+    const response = await axios.post("https://soilsense-api.onrender.com/api/profile", {
+      email,
+      first_name,
+      last_name,
+      device_ID,
+      device_key
+    });
 
     res.json({
       success: true,
       message: 'Perfil salvo com sucesso!',
+      db_response: response.data,
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(401).json({
+    console.error("❌ Erro ao salvar perfil:", err);
+    res.status(500).json({
       success: false,
-      message: err.error_message || 'Token inválido ou expirado',
+      message: 'Erro ao comunicar com server2',
+    });
+  }
+});
+
+app.get('/api/user-profile', async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email é obrigatório',
+    });
+  }
+
+  try {
+    // Requisição ao server2 (onde o banco está)
+    const response = await axios.get(`https://soilsense-api.onrender.com/api/profile=${email}`);
+
+    res.json({
+      success: true,
+      profile: response.data.profile,
+    });
+  } catch (err) {
+    console.error("❌ Erro ao buscar perfil:", err.message);
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao buscar perfil no server2',
     });
   }
 });
