@@ -419,7 +419,7 @@ const initChart = () => {
       intersect: false
     },
     scales: {
-      y: { min: 0, max: 100 },
+      y: { min: 0, max: 5 },
       x: {
         title: { display: true, text: 'Nutrient Levels' },
         ticks: {
