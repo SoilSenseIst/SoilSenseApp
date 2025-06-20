@@ -116,7 +116,7 @@ const initChart = () => {
       scales: {
         y: {
           min: 0,
-          max: 100,
+          max: 10,
           title: {
             display: true,
             text: 'Percentage (%)'
@@ -236,7 +236,7 @@ const refreshReadings = async () => {
 
 
   <div class="device-box">
-    <h2 class="device-title"> Device: {{ deviceID }}</h2>
+    <h2 class="device-title"> Device: {{ deviceID }} </h2>
 
 
     <div class="info-icons">
