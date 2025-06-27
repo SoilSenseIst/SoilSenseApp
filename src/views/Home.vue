@@ -291,12 +291,12 @@ const initChart = () => {
           label: 'Humidity (%)',
           data: chartHumidityData.value,
           borderColor: 'blue',
-          backgroundColor: 'rgba(0,0,255,0.1)',
+          bacgroundColor: 'rgba(0,0,255,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'rgba(0,0,255,1)',
+          pointBacgroundColor: 'rgba(0,0,255,1)',
           pointBorderColor: 'blue',
           borderWidth: 1
         },
@@ -304,12 +304,12 @@ const initChart = () => {
           label: 'Temperature (°C)',
           data: chartTemperatureData.value,
           borderColor: 'red',
-          backgroundColor: 'rgba(255,0,0,0.1)',
+          bacgroundColor: 'rgba(255,0,0,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'rgba(255,0,0,1)',
+          pointBacgroundColor: 'rgba(255,0,0,1)',
           pointBorderColor: 'red',
           borderWidth: 1
         }
@@ -360,12 +360,12 @@ const initChart = () => {
         label: 'Nitrogen (%)',
         data: chartNitrogenData.value,
         borderColor: 'green',
-        backgroundColor: 'rgba(0,128,0,0.1)',
+        bacgroundColor: 'rgba(0,128,0,0.1)',
         fill: true,
         tension: 0.3,
         pointStyle: 'circle',
         pointRadius: 1.5,
-        pointBackgroundColor: 'green',
+        pointBacgroundColor: 'green',
         pointBorderColor: 'green',
         borderWidth: 1
       },
@@ -373,12 +373,12 @@ const initChart = () => {
         label: 'Phosphorus (%)',
         data: chartPhosphorusData.value,
         borderColor: 'orange',
-        backgroundColor: 'rgba(255,165,0,0.1)',
+        bacgroundColor: 'rgba(255,165,0,0.1)',
         fill: true,
         tension: 0.3,
         pointStyle: 'circle',
         pointRadius: 1.5,
-        pointBackgroundColor: 'orange',
+        pointBacgroundColor: 'orange',
         pointBorderColor: 'orange',
         borderWidth: 1
       },
@@ -386,12 +386,12 @@ const initChart = () => {
         label: 'Potassium (%)',
         data: chartPotassiumData.value,
         borderColor: 'red',
-        backgroundColor: 'rgba(255,0,0,0.1)',
+        bacgroundColor: 'rgba(255,0,0,0.1)',
         fill: true,
         tension: 0.3,
         pointStyle: 'circle',
         pointRadius: 1.5,
-        pointBackgroundColor: 'red',
+        pointBacgroundColor: 'red',
         pointBorderColor: 'red',
         borderWidth: 1
       }
@@ -439,67 +439,67 @@ const initChart = () => {
       labels: chartIrrigationData.value,
       datasets: [
         {
-          label: 'Dispenser nº1 (kg)',
+          label: 'Dispenser nº1 (g)',
           data: chart1Data.value,
           borderColor: 'green',
-          backgroundColor: 'rgba(0,128,0,0.1)',
+          bacgroundColor: 'rgba(0,128,0,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'green',
+          pointBacgroundColor: 'green',
           pointBorderColor: 'green',
           borderWidth: 1
         },
         {
-          label: 'Dispenser nº2 (kg)',
+          label: 'Dispenser nº2 (g)',
           data: chart2Data.value,
           borderColor: 'orange',
-          backgroundColor: 'rgba(255,165,0,0.1)',
+          bacgroundColor: 'rgba(255,165,0,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'orange',
+          pointBacgroundColor: 'orange',
           pointBorderColor: 'orange',
           borderWidth: 1
         },
         {
-          label: 'Dispenser nº3 (kg)',
+          label: 'Dispenser nº3 (g)',
           data: chart3Data.value,
           borderColor: 'red',
-          backgroundColor: 'rgba(255,0,0,0.1)',
+          bacgroundColor: 'rgba(255,0,0,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'red',
+          pointBacgroundColor: 'red',
           pointBorderColor: 'red',
           borderWidth: 1
         },
         {
-          label: 'Dispenser nº4 (kg)',
+          label: 'Dispenser nº4 (g)',
           data: chart4Data.value,
           borderColor: 'blue',
-          backgroundColor: 'rgba(0,0,255,0.1)',
+          bacgroundColor: 'rgba(0,0,255,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'blue',
+          pointBacgroundColor: 'blue',
           pointBorderColor: 'blue',
           borderWidth: 1
         },
         {
-          label: 'Dispenser nº5 (kg)',
+          label: 'Dispenser nº5 (g)',
           data: chart5Data.value,
           borderColor: 'purple',
-          backgroundColor: 'rgba(128,0,128,0.1)',
+          bacgroundColor: 'rgba(128,0,128,0.1)',
           fill: true,
           tension: 0.3,
           pointStyle: 'circle',
           pointRadius: 1.5,
-          pointBackgroundColor: 'purple',
+          pointBacgroundColor: 'purple',
           pointBorderColor: 'purple',
           borderWidth: 1
         }
@@ -720,7 +720,7 @@ const saveIrrigationData = async () => {
             <h4>Irrigation {{ i + 1 }}</h4>
             <div class="nutrient-inputs">
               <label v-for="(nutrient, j) in set" :key="j">
-                {{ nutrient.name }} ({{ j === 0 ? 'L' : 'Kg' }}):
+                {{ nutrient.name }} ({{ j === 0 ? 'L' : 'g' }}):
                 <input type="number" min="0" max="100" v-model.number="nutrients[i][j].value" />
                 
               </label>
@@ -800,7 +800,7 @@ main {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  background-color: var(--primary-dark);
+  bacground-color: var(--primary-dark);
   color: #F3F4F6;
   padding: 2rem;
 }
@@ -829,7 +829,7 @@ h2 ~ p {
     flex: 1 1 0%;
     display: block;
     border-radius: 1.5rem 1.5rem 1.5rem 1.5rem;
-    background-color: white;
+    bacground-color: white;
     box-shadow: 0px -4px 12px 4px rgba(0,0,0,0.16);
     color: var(--dark);
     padding: 2rem 1.5rem;
@@ -852,7 +852,7 @@ h2 ~ p {
   top: 1rem;
   display: flex;
   gap: 0.75rem;
-  background:white;
+  bacground:white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
@@ -875,7 +875,7 @@ h2 ~ p {
   top: 2rem;
   display: flex;
   gap: 0.75rem;
-  background: white;
+  bacground: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
@@ -900,7 +900,7 @@ h2 ~ p {
 
 
 .edit-button, .alarm-button {
-  background: none;
+  bacground: none;
   border: none;
   font-size: 1.25rem;
   cursor: pointer;
@@ -994,7 +994,7 @@ h2 ~ p {
   right: 2rem;
   width: 48px;
   height: 48px;
-  background-color: white;
+  bacground-color: white;
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(0,0,0,0.15);
   display: flex;
@@ -1003,7 +1003,7 @@ h2 ~ p {
   font-size: 1.5rem;
   cursor: pointer;
   z-index: 1000;
-  transition: background-color 0.3s;
+  transition: bacground-color 0.3s;
 }
 
 .add-device-circle {
@@ -1012,7 +1012,7 @@ h2 ~ p {
   right: 6rem;
   width: 48px;
   height: 48px;
-  background-color: white;
+  bacground-color: white;
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(0,0,0,0.15);
   display: flex;
@@ -1021,11 +1021,11 @@ h2 ~ p {
   font-size: 1.5rem;
   cursor: pointer;
   z-index: 1000;
-  transition: background-color 0.3s;
+  transition: bacground-color 0.3s;
 }
 
 .profile-circle:hover, .add-device:hover {
-  background-color: #f0f0f0;
+  bacground-color: #f0f0f0;
 }
 
 .charts-container {
@@ -1061,13 +1061,13 @@ h2 ~ p {
 }
 
 .save {
-  background-color: var(--primary-dark);
+  bacground-color: var(--primary-dark);
   color: white;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: bacground-color 0.3s ease;
 }
 
 </style>
