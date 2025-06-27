@@ -560,7 +560,7 @@ const refreshReadings = async () => {
       Potassio.value = latest.potassium;
 
       // Pega os últimos 28 em ordem crescente
-      const recent = sortedData.slice(-20);
+      const recent = sortedData.slice();
 
       chartLabels.value = recent.map(entry => {
         const date = new Date(entry.created_at);
