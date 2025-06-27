@@ -527,7 +527,7 @@ const initChart = () => {
         intersect: false
       },
       scales: {
-        y: { min: 0, max: 100 },
+        y: { min: 0, max: 1000 },
         x: {
           title: { display: true, text: 'Irrigation levels' },
           ticks: {
@@ -595,16 +595,29 @@ const refreshReadings1 = async () => {
     console.log("REFRESH IRRIGATION RESPONSE:", data);
 
     if (data.success && data.data && data.data.length > 0) {
-  const sortedData = data.data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      const sortedData = data.data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-      chartIrrigationData.value = sortedData.map((entry, i) => `Day ${i + 1}`);
+      // Formata as datas para o eixo x
+      chartIrrigationData.value = sortedData.map(entry => {
+        const date = new Date(entry.created_at);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${hours}:${minutes} ${day}-${month}-${year}`;
+      });
+
       chart1Data.value = sortedData.map(entry => entry.dispenser1);
       chart2Data.value = sortedData.map(entry => entry.dispenser2);
       chart3Data.value = sortedData.map(entry => entry.dispenser3);
       chart4Data.value = sortedData.map(entry => entry.dispenser4);
       chart5Data.value = sortedData.map(entry => entry.dispenser5);
 
-      initChart();
+      // Inicializa o gráfico com limite máximo no eixo Y (ex: Chart.js)
+      initChart({
+        yAxisMax: 1000
+      });
     } else {
       console.warn("⚠️ No irrigation data returned from API");
     }
@@ -612,6 +625,7 @@ const refreshReadings1 = async () => {
     console.error("❌ Error fetching irrigation data:", error);
   }
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 const logout = async () => {
