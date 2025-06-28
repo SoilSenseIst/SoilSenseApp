@@ -814,7 +814,7 @@ main {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  bacground-color: var(--primary-dark);
+  background-color: var(--primary-dark);
   color: #F3F4F6;
   padding: 2rem;
 }
